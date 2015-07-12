@@ -1,4 +1,5 @@
-  var conjugationForms = [
+
+var conjugationForms = [
   //  {  name: "plain affirmative",           forms: ["う", "く", "ぐ", "す", "つ", "む", "ぶ", "ぬ", "る", "る"]  },
 
   // present tense: 0-5
@@ -109,12 +110,17 @@ module.exports = {
    * conjugate a verb
    */
   conjugate: function (verb, type) {
+    if (type == "v5r-i") // TODO: FIX THIS
+        type = "v5r";
     var index, ret = [];
     if (!type) {
       var lastchar = verb.substring(verb.length-1,verb.length);
       index = verbEndings.indexOf(lastchar);
     }else{
       index = verbTypes.indexOf(type.toLowerCase());
+      if (index == -1) {
+        console.error(type + " not found");
+      }
     }
     var verbstem = verb.substring(0, verb.length - 1);
     var i, e = conjugationForms.length, form, specific;
@@ -125,6 +131,14 @@ module.exports = {
         ret.push({name: form.name, form: verbstem + specific});
       }
     }
+    ret.getForm = function(form){
+      for (var i = 0; i < ret.length; i++) {
+        var entry = ret[i];
+        if (entry.name == form) return entry.form;
+      }
+      console.log(form +"not found");
+      console.log(ret);
+    };
     return ret;
   },
 
